@@ -85,6 +85,12 @@ var colorVariant = getRandomInt(0, 4);
         color: colorCombinations[colorVariant][1]
     });
 
+    var s3 = createShape({
+        offsetX: 360,
+        offsetY: 60,
+        color: colorCombinations[colorVariant][2]
+    });
+
     console.log(s2.segments[0].point);
 
     var p = new Path();
@@ -107,16 +113,33 @@ var colorVariant = getRandomInt(0, 4);
     p.smooth({ type: 'continuous' });
     p.closed = true;
 
+
+    var p2 = new Path();
+
+    for (var i = 0; i < s2.segments.length; i++) {
+        p2.add(s2.segments[i].point);
+    }
+
+    for (var i = 0; i < s3.segments.length; i++) {
+        p2.add(s3.segments[i].point);
+    }
+
+    p2.fillColor = {
+        gradient: {
+            stops: [colorCombinations[colorVariant][2], colorCombinations[colorVariant][1]]
+        },
+        origin: s3.segments[0].point,
+        destination: s2.segments[0].point
+    };
+    p2.smooth({ type: 'continuous' });
+    p2.closed = true;
+
     //var group = new Group([s1, s2]);
 
     // Set the stroke color of all items in the group:
     //group.strokeColor = 'black';
 
-    createShape({
-        offsetX: 360,
-        offsetY: 60,
-        color: colorCombinations[colorVariant][2]
-    });
+
 
 
 
