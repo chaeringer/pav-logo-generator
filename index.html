@@ -5,6 +5,28 @@
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.10.2/paper-full.js"></script>
 <script type="text/paperscript" canvas="myCanvas">
+
+var cPeople = '#d20a3c';
+var cVentures = '#000099';
+var cSkills = '#ec6608';
+var cTechnologie = '#3ac0c4';
+
+var colorCombinations = [
+    [cSkills, cPeople, cVentures],
+    [cVentures, cPeople, cSkills],
+    [cPeople, cVentures, cTechnologie],
+    [cTechnologie, cVentures, cPeople]
+];
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+var colorVariant = getRandomInt(0, 4);
+
+
     (function drawGrid(){
         var g = 60;
         for (var i = 0; i < 11; i++) {
@@ -12,12 +34,14 @@
                 var to = new Point(g * i, 480);
                 var path = new Path.Line(from, to);
                 path.strokeColor = '#e7e7e7';
+                path.dashArray = [10, 12];
         }
 
         for (var i = 0; i < 9; i++) {
                 var from = new Point(0, g * i);
                 var to = new Point(600, g * i);
                 var path = new Path.Line(from, to);
+                path.dashArray = [10, 12];
                 path.strokeColor = '#e7e7e7';
         }
 
@@ -32,7 +56,6 @@
         path.strokeColor = '#000000';
     })();
 
-
     function createShape(conf) {
 
         var offsetLeft = 40;
@@ -45,28 +68,58 @@
             path.add(new Point(50 * (Math.random() + 0.9) + conf.offsetX + offsetLeft, 320 + offsetTop - conf.offsetY * (Math.random() + 0.9) ));
 
             path.closed = true;
-            path.smooth({ type: 'catmull-rom', factor: 0.1 });
+            path.smooth({ type: 'continuous' });
             path.fillColor = conf.color;
         return path;
     }
 
     var s1 = createShape({
         offsetX: 0,
-        offsetY: -20,
-        color: '#D20A3c'
+        offsetY: -10,
+        color: colorCombinations[colorVariant][0]
     });
 
     var s2 = createShape({
         offsetX: 190,
-        offsetY: 70,
-        color: '#000099'
+        offsetY: 0,
+        color: colorCombinations[colorVariant][1]
     });
+
+    console.log(s2.segments[0].point);
+
+    var p = new Path();
+
+    for (var i = 0; i < s2.segments.length; i++) {
+        p.add(s2.segments[i].point);
+    }
+
+    for (var i = 0; i < s1.segments.length; i++) {
+        p.add(s1.segments[i].point);
+    }
+
+    p.fillColor = {
+        gradient: {
+            stops: [colorCombinations[colorVariant][1], colorCombinations[colorVariant][0]]
+        },
+        origin: s2.segments[0].point,
+        destination: s1.segments[0].point
+    };
+    p.smooth({ type: 'continuous' });
+    p.closed = true;
+
+    //var group = new Group([s1, s2]);
+
+    // Set the stroke color of all items in the group:
+    //group.strokeColor = 'black';
 
     createShape({
         offsetX: 360,
         offsetY: 60,
-        color: '#ec6608'
+        color: colorCombinations[colorVariant][2]
     });
+
+
+
 
     var frame = new Symbol(project.importSVG(document.getElementById('frame')));
     var instance = frame.place(view.center).scale(2.1, 2.1);
