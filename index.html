@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PA LOGO Generator</title>
+    <title>🤓 pav logo Generator</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.10.2/paper-full.js"></script>
 <script type="text/paperscript" canvas="myCanvas">
@@ -91,16 +92,15 @@ var colorVariant = getRandomInt(0, 4);
         color: colorCombinations[colorVariant][2]
     });
 
-    console.log(s2.segments[0].point);
 
     var p = new Path();
 
     for (var i = 0; i < s2.segments.length; i++) {
-        p.add(s2.segments[i].point);
+        p.add(s1.segments[i].point);
     }
 
     for (var i = 0; i < s1.segments.length; i++) {
-        p.add(s1.segments[i].point);
+        p.add(s2.segments[i].point);
     }
 
     p.fillColor = {
@@ -110,8 +110,10 @@ var colorVariant = getRandomInt(0, 4);
         origin: s2.segments[0].point,
         destination: s1.segments[0].point
     };
-    p.smooth({ type: 'continuous' });
+    p.selected = true;
     p.closed = true;
+    p.smooth({ type: 'continuous' });
+
 
 
     var p2 = new Path();
@@ -131,18 +133,11 @@ var colorVariant = getRandomInt(0, 4);
         origin: s3.segments[0].point,
         destination: s2.segments[0].point
     };
-    p2.smooth({ type: 'continuous' });
+
+    p2.selected = true;
+    p2.removeSegment(5);
     p2.closed = true;
-
-    //var group = new Group([s1, s2]);
-
-    // Set the stroke color of all items in the group:
-    //group.strokeColor = 'black';
-
-
-
-
-
+    p2.smooth({ type: 'continuous' });
 
     var frame = new Symbol(project.importSVG(document.getElementById('frame')));
     var instance = frame.place(view.center).scale(2.1, 2.1);
